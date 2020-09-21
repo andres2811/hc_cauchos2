@@ -785,5 +785,263 @@ namespace Datos
                         }).ToList();
             }
         }
+
+
+        //METODO CONSULTAR INVENTARIO
+        public List<UEncapInventario> ConsultarInventario()
+        {
+            using (var db = new Mapeo())
+            {
+                return (from uu in db.inventario
+                        join marca_carro in db.marca_carro on uu.Id_marca equals marca_carro.Id
+                        join categoria in db.categoria on uu.Id_categoria equals categoria.Id
+                        join estadoitem in db.estado_item on uu.Id_estado equals estadoitem.Id
+
+                        let _cantCarrito = (from ss in db.carrito where ss.Producto_id == uu.Id select ss.Cantidad).Sum()
+
+                        select new
+                        {
+                            uu,
+                            marca_carro,
+                            categoria,
+                            estadoitem,
+
+                            _cantCarrito
+
+
+                        }).ToList().Select(m => new UEncapInventario
+                        {
+                            Id = m.uu.Id,
+                            Imagen = m.uu.Imagen,
+                            Titulo = m.uu.Titulo,
+                            Precio = m.uu.Precio,
+                            Referencia = m.uu.Referencia,
+                            Ca_actual = m.uu.Ca_actual - (m._cantCarrito.HasValue ? m._cantCarrito.Value : 0),
+                            Ca_minima = m.uu.Ca_minima,
+                            Id_marca = m.uu.Id_marca,
+                            Id_categoria = m.uu.Id_categoria,
+
+                            Id_estado = m.uu.Id_estado,
+
+                            Nombre_categoria = m.categoria.Categoria,
+                            Nombre_marca = m.marca_carro.Marca,
+
+                            Estado = m.estadoitem.Estado_item
+
+
+
+
+
+                        }).ToList();
+            }
+        }
+
+        //METODO CONSULTAR INVENTARIO POR REFERENCIA
+        public List<UEncapInventario> BuscarReferencia(string a)
+        {
+            using (var db = new Mapeo())
+            {
+
+                return (from uu in db.inventario.Where(x => x.Referencia == a)
+                        join marca_carro in db.marca_carro on uu.Id_marca equals marca_carro.Id
+                        join categoria in db.categoria on uu.Id_categoria equals categoria.Id
+                        join estadoitem in db.estado_item on uu.Id_estado equals estadoitem.Id
+
+                        select new
+                        {
+                            uu,
+                            marca_carro,
+                            categoria,
+
+                            estadoitem
+
+
+                        }).ToList().Select(m => new UEncapInventario
+                        {
+                            Id = m.uu.Id,
+                            Imagen = m.uu.Imagen,
+                            Titulo = m.uu.Titulo,
+                            Precio = m.uu.Precio,
+                            Referencia = m.uu.Referencia,
+                            Ca_actual = m.uu.Ca_actual,
+                            Ca_minima = m.uu.Ca_minima,
+                            Id_marca = m.uu.Id_marca,
+                            Id_categoria = m.uu.Id_categoria,
+                            Id_estado = m.uu.Id_estado,
+
+                            Nombre_categoria = m.categoria.Categoria,
+                            Nombre_marca = m.marca_carro.Marca,
+
+                            Estado = m.estadoitem.Estado_item
+
+
+
+
+                        }).ToList();
+            }
+        }
+
+        //METODO DE CONSULTAR ITEM CON ID_MARCA
+        public List<UEncapInventario> BuscarMarca(int marca)
+        {
+            using (var db = new Mapeo())
+            {
+                return (from uu in db.inventario.Where(x => x.Id_marca == marca)
+                        join marca_carro in db.marca_carro on uu.Id_marca equals marca_carro.Id
+                        join categoria in db.categoria on uu.Id_categoria equals categoria.Id
+                        join estadoitem in db.estado_item on uu.Id_estado equals estadoitem.Id
+
+                        select new
+                        {
+                            uu,
+                            marca_carro,
+                            categoria,
+
+                            estadoitem
+
+
+                        }).ToList().Select(m => new UEncapInventario
+                        {
+                            Id = m.uu.Id,
+                            Imagen = m.uu.Imagen,
+                            Titulo = m.uu.Titulo,
+                            Precio = m.uu.Precio,
+                            Referencia = m.uu.Referencia,
+                            Ca_actual = m.uu.Ca_actual,
+                            Ca_minima = m.uu.Ca_minima,
+                            Id_marca = m.uu.Id_marca,
+                            Id_categoria = m.uu.Id_categoria,
+                            Id_estado = m.uu.Id_estado,
+
+                            Nombre_categoria = m.categoria.Categoria,
+                            Nombre_marca = m.marca_carro.Marca,
+
+                            Estado = m.estadoitem.Estado_item
+
+
+
+
+                        }).ToList();
+            }
+        }
+
+        //METODO ACTUALIZAR TABLA EN EL INVENTARIO
+        public void ActualizarInventario(UEncapInventario invent)
+        {
+            using (var db = new Mapeo())
+            {
+                var resultado = db.inventario.SingleOrDefault(x => x.Id == invent.Id);
+                if (resultado != null)
+                {
+                    resultado.Titulo = invent.Titulo;
+                    resultado.Imagen = invent.Imagen;
+                    resultado.Referencia = invent.Referencia;
+                    resultado.Precio = invent.Precio;
+                    resultado.Ca_actual = invent.Ca_actual;
+                    resultado.Ca_minima = invent.Ca_minima;
+                    resultado.Id_marca = invent.Id_marca;
+                    resultado.Id_estado = invent.Id_estado;
+                    resultado.Id_categoria = invent.Id_categoria;
+                    resultado.Last_modify = DateTime.Now;
+                    resultado.Session = invent.Session;
+                    db.SaveChanges();
+                }
+            }
+
+        }
+
+        //METODO DE CONSULTAR ITEM CON ID_Categoria
+        public List<UEncapInventario> BuscarCategoria(int categ)
+        {
+            using (var db = new Mapeo())
+            {
+
+
+                return (from uu in db.inventario.Where(x => x.Id_categoria == categ)
+
+                        join marca_carro in db.marca_carro on uu.Id_marca equals marca_carro.Id
+                        join categoria in db.categoria on uu.Id_categoria equals categoria.Id
+                        join estadoitem in db.estado_item on uu.Id_estado equals estadoitem.Id
+
+                        select new
+                        {
+                            uu,
+                            marca_carro,
+                            categoria,
+
+                            estadoitem
+
+
+                        }).ToList().Select(m => new UEncapInventario
+                        {
+                            Id = m.uu.Id,
+                            Imagen = m.uu.Imagen,
+                            Titulo = m.uu.Titulo,
+                            Precio = m.uu.Precio,
+                            Referencia = m.uu.Referencia,
+                            Ca_actual = m.uu.Ca_actual,
+                            Ca_minima = m.uu.Ca_minima,
+                            Id_marca = m.uu.Id_marca,
+                            Id_categoria = m.uu.Id_categoria,
+                            Id_estado = m.uu.Id_estado,
+
+                            Nombre_categoria = m.categoria.Categoria,
+                            Nombre_marca = m.marca_carro.Marca,
+
+                            Estado = m.estadoitem.Estado_item
+
+
+
+
+
+                        }).ToList();
+            }
+        }
+
+        //METODO DE CONSULTAR ITEM MARCA Y CATEGORIA
+        public List<UEncapInventario> BuscarMarcaCategoria(int marca, int categ)
+        {
+            using (var db = new Mapeo())
+            {
+                return (from uu in db.inventario.Where(x => x.Id_marca == marca && x.Id_categoria == categ)
+                        join marca_carro in db.marca_carro on uu.Id_marca equals marca_carro.Id
+                        join categoria in db.categoria on uu.Id_categoria equals categoria.Id
+                        join estadoitem in db.estado_item on uu.Id_estado equals estadoitem.Id
+
+                        select new
+                        {
+                            uu,
+                            marca_carro,
+                            categoria,
+
+                            estadoitem
+
+
+                        }).ToList().Select(m => new UEncapInventario
+                        {
+                            Id = m.uu.Id,
+                            Imagen = m.uu.Imagen,
+                            Titulo = m.uu.Titulo,
+                            Precio = m.uu.Precio,
+                            Referencia = m.uu.Referencia,
+                            Ca_actual = m.uu.Ca_actual,
+                            Ca_minima = m.uu.Ca_minima,
+                            Id_marca = m.uu.Id_marca,
+                            Id_categoria = m.uu.Id_categoria,
+                            Id_estado = m.uu.Id_estado,
+
+                            Nombre_categoria = m.categoria.Categoria,
+                            Nombre_marca = m.marca_carro.Marca,
+
+                            Estado = m.estadoitem.Estado_item
+
+
+
+
+
+                        }).ToList();
+            }
+        }
+
     }
 }

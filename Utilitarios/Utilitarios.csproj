@@ -62,6 +62,7 @@
     <Compile Include="UEncapMunicipio.cs" />
     <Compile Include="UEncapParametros.cs" />
     <Compile Include="UEncapPedido.cs" />
+    <Compile Include="UEncapProducto_pedido.cs" />
     <Compile Include="UEncapRol.cs" />
     <Compile Include="UEncapUsuario.cs" />
   </ItemGroup>

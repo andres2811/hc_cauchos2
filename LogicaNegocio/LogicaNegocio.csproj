@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="LAdministrador.cs" />
     <Compile Include="LDomiciliario.cs" />
+    <Compile Include="LEmpleado.cs" />
     <Compile Include="LLogin.cs" />
     <Compile Include="LUsuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
